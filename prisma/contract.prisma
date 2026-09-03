@@ -1,0 +1,68 @@
+// use prisma-next
+model Company {
+  id          String            @id @default(cuid())
+  name        String
+  logoUrl     String?
+  bgColor     String?           @default("bg-slate-900")
+  industry    String?           @default("Technology")
+  description String?
+  employees   String?           @default("500–1,000 emp")
+  createdAt   TimestamptzString @default(now())
+  updatedAt   TimestamptzString @default(now())
+
+  jobs        Job[]
+}
+
+model Job {
+  id            String            @id @default(cuid())
+  title         String
+  companyId     String
+  location      String
+  salary        String?
+  jobType       JobType           @default(FULL_TIME)
+  workplaceType WorkplaceType     @default(HYBRID)
+  tags          String[]          @default([])
+  isFeatured    Boolean           @default(false)
+  dueDate       String?
+  createdAt     TimestamptzString @default(now())
+  updatedAt     TimestamptzString @default(now())
+
+  company       Company           @relation(fields:[companyId], references:[id], onDelete: Cascade)
+  applications  Application[]
+}
+
+model Testimonial {
+  id                    String            @id @default(cuid())
+  quote                 String
+  authorName            String
+  authorRole            String
+  authorCompanyOrSchool String
+  rating                Int               @default(5)
+  avatarColor           String?           @default("bg-indigo-600")
+  createdAt             TimestamptzString @default(now())
+}
+
+model Application {
+  id        String            @id @default(cuid())
+  jobId     String
+  fullName  String
+  email     String
+  resumeUrl String?
+  status    String            @default("PENDING")
+  createdAt TimestamptzString @default(now())
+
+  job       Job               @relation(fields:[jobId], references:[id], onDelete: Cascade)
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  CONTRACT
+}
+
+enum WorkplaceType {
+  REMOTE
+  HYBRID
+  ON_SITE
+}
