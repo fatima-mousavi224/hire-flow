@@ -5,13 +5,15 @@ import Link from 'next/link';
 import { Menu, Search, Bell, MessageSquare } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import SidebarNav from './SidebarNav';
+import { useBadges } from '@/context/BadgeContext';
 
 export default function DashboardHeader() {
   const [open, setOpen] = useState(false);
+  const { unreadMessagesCount, unreadNotificationsCount } = useBadges();
 
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md md:px-8">
-      {/* Mobile Hamburger Menu (Hidden on Desktop) */}
+      {/* Mobile Menu */}
       <div className="flex items-center gap-3 md:hidden">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
@@ -37,7 +39,7 @@ export default function DashboardHeader() {
         <span className="font-extrabold text-slate-900 text-sm">HireFlow</span>
       </div>
 
-      {/* Global Search Bar */}
+      {/* Search Input */}
       <div className="hidden sm:flex max-w-md flex-1 items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/50 px-3 py-2 text-xs text-slate-400">
         <Search className="h-4 w-4 shrink-0 text-slate-400" />
         <input
@@ -47,14 +49,34 @@ export default function DashboardHeader() {
         />
       </div>
 
-      {/* Right Header Controls */}
+      {/* Header Actions */}
       <div className="flex items-center gap-2 sm:gap-3">
-        <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/80 text-slate-500 hover:bg-slate-50">
+        {/* Notifications Icon */}
+        <Link
+          href="/notifications"
+          className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/80 text-slate-500 hover:bg-slate-50 cursor-pointer"
+        >
           <Bell className="h-4 w-4" />
-        </button>
-        <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/80 text-slate-500 hover:bg-slate-50">
+          {unreadNotificationsCount > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#5243E0] text-[9px] font-bold text-white">
+              {unreadNotificationsCount}
+            </span>
+          )}
+        </Link>
+
+        {/* Messages Icon */}
+        <Link
+          href="/messages"
+          className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200/80 text-slate-500 hover:bg-slate-50 cursor-pointer"
+        >
           <MessageSquare className="h-4 w-4" />
-        </button>
+          {unreadMessagesCount > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#5243E0] text-[9px] font-bold text-white">
+              {unreadMessagesCount}
+            </span>
+          )}
+        </Link>
+
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-[#5243E0] font-bold text-xs">
           FM
         </div>

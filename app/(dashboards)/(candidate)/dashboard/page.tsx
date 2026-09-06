@@ -26,9 +26,9 @@ export default async function CandidateDashboardPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden">
+    <div className="space-y-4 sm:space-y-6 max-w-full overflow-hidden ">
       {/* Responsive Top Welcome Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 ">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
             Welcome back, {user.name.split(' ')[0]}! 👋

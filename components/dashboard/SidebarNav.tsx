@@ -2,36 +2,61 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  Bookmark, 
-  MessageSquare, 
-  Bell, 
-  User, 
-  FileText, 
-  Settings 
+import {
+  LayoutDashboard,
+  Briefcase,
+  Bookmark,
+  MessageSquare,
+  Bell,
+  User,
+  FileText,
+  Settings,
 } from 'lucide-react';
 
-const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Applications', href: '/applications', icon: Briefcase },
-  { label: 'Saved Jobs', href: '/saved-jobs', icon: Bookmark },
-  { label: 'Messages', href: '/messages', icon: MessageSquare, badge: 3 },
-  { label: 'Notifications', href: '/notifications', icon: Bell, badge: 2 },
-  { label: 'Profile', href: '/profile', icon: User },
-  { label: 'Resume', href: '/resume', icon: FileText },
-  { label: 'Settings', href: '/settings', icon: Settings },
-];
+interface SidebarNavProps {
+  onSelect?: () => void;
+  // Dynamic props passed from database or state
+  unreadMessagesCount?: number;
+  unreadNotificationsCount?: number;
+}
 
-export default function SidebarNav({ onSelect }: { onSelect?: () => void }) {
+export default function SidebarNav({
+  onSelect,
+  unreadMessagesCount = 0,
+  unreadNotificationsCount = 0,
+}: SidebarNavProps) {
   const pathname = usePathname();
 
+  const navItems = [
+    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { label: 'Applications', href: '/applications', icon: Briefcase },
+    { label: 'Saved Jobs', href: '/saved-jobs', icon: Bookmark },
+    {
+      label: 'Messages',
+      href: '/messages',
+      icon: MessageSquare,
+      badge: unreadMessagesCount,
+    },
+    {
+      label: 'Notifications',
+      href: '/notifications',
+      icon: Bell,
+      badge: unreadNotificationsCount,
+    },
+    { label: 'Profile', href: '/profile', icon: User },
+    { label: 'Resume', href: '/resume', icon: FileText },
+    { label: 'Settings', href: '/settings', icon: Settings },
+  ];
+
   return (
-    <nav className="space-y-1 px-2">
-      {NAV_ITEMS.map((item) => {
+    <nav className="space-y-1">
+      {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = pathname === item.href;
+
+        // Checks if badge exists AND is greater than zero
+        const hasUnreadData =
+          typeof item.badge === 'number' && item.badge > 0;
 
         return (
           <Link
@@ -45,11 +70,13 @@ export default function SidebarNav({ onSelect }: { onSelect?: () => void }) {
             }`}
           >
             <div className="flex items-center gap-3">
-              <Icon className={`h-4 w-4 ${isActive ? 'text-[#5243E0]' : 'text-slate-400'}`} />
+              <Icon className="h-4 w-4 shrink-0" />
               <span>{item.label}</span>
             </div>
-            {item.badge && (
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#5243E0] text-[10px] font-bold text-white">
+
+            {/* Render circle badge ONLY if there is actual unread data */}
+            {hasUnreadData && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#5243E0] text-[10px] font-bold text-white shadow-xs">
                 {item.badge}
               </span>
             )}
