@@ -1,0 +1,656 @@
+[
+  {
+    "id": "dropTable.savedJob",
+    "label": "Drop table \"savedJob\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "savedJob"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"savedJob\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"savedJob\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop table \"savedJob\"",
+        "sql": "DROP TABLE \"public\".\"savedJob\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"savedJob\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"savedJob\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropTable.user",
+    "label": "Drop table \"user\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop table \"user\"",
+        "sql": "DROP TABLE \"public\".\"user\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.application",
+    "label": "Create table \"application\"",
+    "summary": "Creates table \"application\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "application"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"application\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"application\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"application\"",
+        "sql": "CREATE TABLE \"public\".\"application\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"email\" text NOT NULL,\n  \"fullName\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"jobId\" text NOT NULL,\n  \"resumeUrl\" text,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"application\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"application\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.testimonial",
+    "label": "Create table \"testimonial\"",
+    "summary": "Creates table \"testimonial\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "testimonial"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"testimonial\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"testimonial\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"testimonial\"",
+        "sql": "CREATE TABLE \"public\".\"testimonial\" (\n  \"authorCompanyOrSchool\" text NOT NULL,\n  \"authorName\" text NOT NULL,\n  \"authorRole\" text NOT NULL,\n  \"avatarColor\" text DEFAULT 'bg-indigo-600',\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"quote\" text NOT NULL,\n  \"rating\" int4 DEFAULT 5 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"testimonial\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"testimonial\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.company.description",
+    "label": "Add column \"description\" to \"company\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "description",
+        "table": "company"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"description\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "description"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"description\"",
+        "sql": "ALTER TABLE \"public\".\"company\" ADD COLUMN \"description\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"description\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "description"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.company.employees",
+    "label": "Add column \"employees\" to \"company\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "employees",
+        "table": "company"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"employees\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "employees"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"employees\"",
+        "sql": "ALTER TABLE \"public\".\"company\" ADD COLUMN \"employees\" text DEFAULT '500-1,000 emp'"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"employees\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "employees"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.company.industry",
+    "label": "Add column \"industry\" to \"company\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "industry",
+        "table": "company"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"industry\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "industry"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"industry\"",
+        "sql": "ALTER TABLE \"public\".\"company\" ADD COLUMN \"industry\" text DEFAULT 'Technology'"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"industry\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "industry"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.company.updatedAt",
+    "label": "Add column \"updatedAt\" to \"company\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "updatedAt",
+        "table": "company"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"updatedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "updatedAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"updatedAt\"",
+        "sql": "ALTER TABLE \"public\".\"company\" ADD COLUMN \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"updatedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "updatedAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.job.dueDate",
+    "label": "Add column \"dueDate\" to \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "dueDate",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"dueDate\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "dueDate"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"dueDate\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD COLUMN \"dueDate\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"dueDate\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "dueDate"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.job.updatedAt",
+    "label": "Add column \"updatedAt\" to \"job\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "updatedAt",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"updatedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "updatedAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"updatedAt\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ADD COLUMN \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"updatedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "updatedAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "setDefault.company.bgColor",
+    "label": "Set default on \"company\".\"bgColor\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "bgColor",
+        "table": "company"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"bgColor\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "bgColor"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"bgColor\"",
+        "sql": "ALTER TABLE \"public\".\"company\" ALTER COLUMN \"bgColor\" SET DEFAULT 'bg-slate-900'"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"bgColor\" has a default",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"column_default\" IS NOT NULL)) AS \"result\"",
+        "params": [
+          "public",
+          "company",
+          "bgColor"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "setDefault.job.jobType",
+    "label": "Set default on \"job\".\"jobType\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "jobType",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"jobType\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "jobType"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"jobType\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ALTER COLUMN \"jobType\" SET DEFAULT 'FULL_TIME'"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"jobType\" has a default",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"column_default\" IS NOT NULL)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "jobType"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.job.salary",
+    "label": "Drop NOT NULL on \"job\".\"salary\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "salary",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"salary\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "salary"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"salary\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ALTER COLUMN \"salary\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"salary\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "salary",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "setDefault.job.workplaceType",
+    "label": "Set default on \"job\".\"workplaceType\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "workplaceType",
+        "table": "job"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"workplaceType\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "workplaceType"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"workplaceType\"",
+        "sql": "ALTER TABLE \"public\".\"job\" ALTER COLUMN \"workplaceType\" SET DEFAULT 'HYBRID'"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"workplaceType\" has a default",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"column_default\" IS NOT NULL)) AS \"result\"",
+        "params": [
+          "public",
+          "job",
+          "workplaceType"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.application.application_jobId_idx_623c8f77",
+    "label": "Create index \"application_jobId_idx_623c8f77\" on \"application\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "application_jobId_idx_623c8f77",
+        "table": "application"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"application_jobId_idx_623c8f77\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"application_jobId_idx_623c8f77\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"application_jobId_idx_623c8f77\"",
+        "sql": "CREATE INDEX \"application_jobId_idx_623c8f77\" ON \"public\".\"application\" (\"jobId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"application_jobId_idx_623c8f77\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"application_jobId_idx_623c8f77\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.application.application_jobId_fkey",
+    "label": "Add foreign key \"application_jobId_fkey\" on \"application\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "application_jobId_fkey",
+        "table": "application"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"application_jobId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "application_jobId_fkey",
+          "public",
+          "\"public\".\"application\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"application_jobId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"application\"\nADD CONSTRAINT \"application_jobId_fkey\"\nFOREIGN KEY (\"jobId\")\nREFERENCES \"public\".\"job\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"application_jobId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "application_jobId_fkey",
+          "public",
+          "\"public\".\"application\""
+        ]
+      }
+    ]
+  }
+]

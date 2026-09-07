@@ -1,57 +1,58 @@
 // use prisma-next
+
 model Company {
-  id          String            @id @default(cuid())
+  id          String   @id @default(uuid())
   name        String
   logoUrl     String?
-  bgColor     String?           @default("bg-slate-900")
-  industry    String?           @default("Technology")
+  bgColor     String?  @default("bg-slate-900")
+  industry    String?  @default("Technology")
   description String?
-  employees   String?           @default("500–1,000 emp")
-  createdAt   TimestamptzString @default(now())
-  updatedAt   TimestamptzString @default(now())
+  employees   String?  @default("500-1,000 emp")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 
-  jobs        Job[]
+  jobs Job[]
 }
 
 model Job {
-  id            String            @id @default(cuid())
+  id            String        @id @default(uuid())
   title         String
   companyId     String
   location      String
   salary        String?
-  jobType       JobType           @default(FULL_TIME)
-  workplaceType WorkplaceType     @default(HYBRID)
-  tags          String[]          @default([])
-  isFeatured    Boolean           @default(false)
+  jobType       JobType       @default(FULL_TIME)
+  workplaceType WorkplaceType @default(HYBRID)
+  tags          String[]
+  isFeatured    Boolean       @default(false)
   dueDate       String?
-  createdAt     TimestamptzString @default(now())
-  updatedAt     TimestamptzString @default(now())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now())
 
-  company       Company           @relation(fields:[companyId], references:[id], onDelete: Cascade)
-  applications  Application[]
+company      Company       @relation(fields: [companyId], references: [id])
+  applications Application[]
 }
 
 model Testimonial {
-  id                    String            @id @default(cuid())
+  id                    String   @id @default(uuid())
   quote                 String
   authorName            String
   authorRole            String
   authorCompanyOrSchool String
-  rating                Int               @default(5)
-  avatarColor           String?           @default("bg-indigo-600")
-  createdAt             TimestamptzString @default(now())
+  rating                Int      @default(5)
+  avatarColor           String?  @default("bg-indigo-600")
+  createdAt             DateTime @default(now())
 }
 
 model Application {
-  id        String            @id @default(cuid())
+  id        String   @id @default(uuid())
   jobId     String
   fullName  String
   email     String
   resumeUrl String?
-  status    String            @default("PENDING")
-  createdAt TimestamptzString @default(now())
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
 
-  job       Job               @relation(fields:[jobId], references:[id], onDelete: Cascade)
+  job Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
 }
 
 enum JobType {

@@ -28,7 +28,7 @@ export default function RecruiterSidebar({
 
   const navItems = [
     { label: 'Dashboard', href: '/recruiter-dashboard', icon: LayoutDashboard },
-    { label: 'Jobs', href: '/jobs', icon: Briefcase },
+    { label: 'Jobs', href: '/recruiter-jops', icon: Briefcase },
     { label: 'Applicants', href: '/applicants', icon: Users },
     {
       label: 'Messages',
